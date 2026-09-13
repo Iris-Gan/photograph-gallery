@@ -18,6 +18,9 @@ type Intro = {
   email: string;
 };
 
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+const assetPath = (path: string) => `${basePath}${path}`;
+
 // Ordered from 作品清单.numbers. Column placement is curated to keep both
 // waterfall columns visually balanced while preserving the listed sequence.
 const starterPhotos: Photo[] = [
@@ -119,7 +122,7 @@ export default function Home() {
       .flatMap((index) => groups[index].photos)
       .forEach((photo) => {
         const image = new window.Image();
-        image.src = encodeURI(photo.src);
+        image.src = encodeURI(assetPath(photo.src));
       });
   }, [groups, view, workPage]);
 
@@ -190,8 +193,8 @@ export default function Home() {
 
         <button className="hero-work" onClick={nextPhoto} aria-label="Show next photograph">
           <span className="hero-frame">
-            {previousPhoto && <img className="hero-photo is-previous" src={encodeURI(previousPhoto.src)} alt="" aria-hidden="true" />}
-            <img key={current.id} className="hero-photo is-current" src={encodeURI(current.src)} alt={current.title} />
+            {previousPhoto && <img className="hero-photo is-previous" src={encodeURI(assetPath(previousPhoto.src))} alt="" aria-hidden="true" />}
+            <img key={current.id} className="hero-photo is-current" src={encodeURI(assetPath(current.src))} alt={current.title} />
           </span>
         </button>
 
@@ -204,7 +207,7 @@ export default function Home() {
           aria-label="Swipe right or click to view selected works"
           title="右滑或点击进入作品页"
         >
-          <img src="/right.png" alt="" aria-hidden="true" />
+          <img src={assetPath("/right.png")} alt="" aria-hidden="true" />
         </button>
 
         <p className="slide-count">{String(active + 1).padStart(2, "0")} / {String(photos.length).padStart(2, "0")}</p>
@@ -261,7 +264,7 @@ export default function Home() {
 function WorkPhoto({ photo }: { photo: Photo }) {
   return (
     <figure className="masonry-photo">
-      <img src={encodeURI(photo.src)} alt={photo.title} loading="lazy" decoding="async" />
+      <img src={encodeURI(assetPath(photo.src))} alt={photo.title} loading="lazy" decoding="async" />
     </figure>
   );
 }
@@ -300,7 +303,7 @@ function WallEditor({ value, onClose, onSave }: { value: Photo[]; onClose: () =>
         <div className="photo-editor-list">
           {draft.map((photo, index) => (
             <div className="photo-editor-row" key={photo.id}>
-              <div className="editor-thumb"><img src={encodeURI(photo.src)} alt="" /></div>
+              <div className="editor-thumb"><img src={encodeURI(assetPath(photo.src))} alt="" /></div>
               <input aria-label={`Title for photo ${index + 1}`} value={photo.title} onChange={(event) => setDraft(draft.map((item) => item.id === photo.id ? { ...item, title: event.target.value } : item))} />
               <button onClick={() => move(index, -1)} aria-label="Move photo earlier">↑</button>
               <button onClick={() => move(index, 1)} aria-label="Move photo later">↓</button>
